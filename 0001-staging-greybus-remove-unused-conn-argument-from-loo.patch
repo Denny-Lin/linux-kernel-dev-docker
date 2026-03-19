@@ -1,0 +1,31 @@
+From b00ed896c36ad7a5f520d1e862913c1980c59e07 Mon Sep 17 00:00:00 2001
+From: Hungyu Lin <dennylin0707@gmail.com>
+Date: Thu, 19 Mar 2026 01:15:49 +0000
+Subject: [PATCH] staging: greybus: remove unused conn argument from loopback
+ macro
+
+The 'conn' argument in the gb_dev_loopback_ro_attr macro is not
+used in the macro body. Remove it to clean up the code and fix
+the checkpatch warning.
+
+Signed-off-by: Hungyu Lin <dennylin0707@gmail.com>
+---
+ drivers/staging/greybus/loopback.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/greybus/loopback.c b/drivers/staging/greybus/loopback.c
+index aa9c73cb0..34e79e99c 100644
+--- a/drivers/staging/greybus/loopback.c
++++ b/drivers/staging/greybus/loopback.c
+@@ -193,7 +193,7 @@ static ssize_t field##_store(struct device *dev,			\
+ }									\
+ static DEVICE_ATTR_RW(field)
+ 
+-#define gb_dev_loopback_ro_attr(field, conn)				\
++#define gb_dev_loopback_ro_attr(field)				\
+ static ssize_t field##_show(struct device *dev,		\
+ 			    struct device_attribute *attr,		\
+ 			    char *buf)					\
+-- 
+2.34.1
+
