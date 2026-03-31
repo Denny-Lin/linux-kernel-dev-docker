@@ -35,36 +35,81 @@ docker run -it --rm \
 
 ---
 
+## Working with linux-next (Recommended)
+
+For upstream contributions, always base your work on **linux-next**, not the mainline tree.
+
+### Fix Git HTTP2 issue (important in Docker)
+
+```bash
+git config --global http.version HTTP/1.1
+```
+
+### Option A (Recommended): Clone linux-next directly
+
+```bash
+git clone --depth=1 https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+cd linux-next
+git switch -c my-fix
+```
+
+### Option B: Add linux-next to existing repo
+
+```bash
+git remote add linux-next https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+git fetch --depth=1 linux-next
+git switch -c my-fix linux-next/master
+```
+
+### Ensure clean working tree
+
+```bash
+git reset --hard
+git clean -fd
+git status
+```
+
+Expected:
+
+```
+nothing to commit, working tree clean
+```
+
+---
+
 ## Contribution Workflow (Staging Clean-up)
 
 ### 1. Find Issues
-Use the built-in kernel script to find style violations in staging drivers:
 
 ```bash
 ./scripts/checkpatch.pl --no-tree -f drivers/staging/greybus/loopback.c | grep "WARNING"
 ```
 
+---
+
 ### 2. Fix and Commit
-Fix the issue using vi, then commit with your Signed-off-by signature:
+
+Make **minimal changes only** (one logical fix per patch):
 
 ```bash
-# Edit the file
 vi drivers/staging/greybus/loopback.c
 
-# Stage and Commit
 git add drivers/staging/greybus/loopback.c
 git -c user.name="Your Name" \
     -c user.email="your@email.com" \
     commit -s
 ```
 
+---
+
 ### 3. Generate Patch
-Generate the patch file and send it directly to the maintainers (e.g., Greg Kroah-Hartman):
 
 ```bash
 git format-patch -1
 ./scripts/checkpatch.pl 0001-*.patch
 ```
+
+---
 
 ### 4. Send Patch via Email
 
@@ -89,6 +134,8 @@ git send-email \
 - Do not store credentials in Dockerfile, environment variables, or Git
 - Always input sensitive data interactively
 - Keep the environment stateless and reproducible
+- Always work on a clean tree before committing
+- One patch = one logical change
 
 ---
 
@@ -96,6 +143,7 @@ git send-email \
 
 - Apple Silicon (ARM64) support
 - Docker-based development environment
+- linux-next workflow support
 - Kernel build & patch workflow
 - Secure, no credential persistence
 
