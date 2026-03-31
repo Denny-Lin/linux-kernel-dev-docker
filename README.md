@@ -32,19 +32,33 @@ docker run -it --rm \
 
 ## Base Trees
 
-### linux-next (general use)
+### mainline (default for most work)
+
+Use this for documentation fixes, driver work, and normal upstream patches.
 
 ```bash
-git clone --depth=1 https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-cd linux-next
+git clone https://github.com/torvalds/linux.git
+cd linux
 git switch -c my-fix
 ```
 
-### staging (recommended for drivers/staging)
+### staging (only for drivers/staging)
+
+Use this only when your change is in `drivers/staging/`.
 
 ```bash
 git clone --depth=1 https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
 cd staging
+git switch -c my-fix
+```
+
+### linux-next (advanced use)
+
+Use this for integration testing and tracking subsystem merges. It is not the usual starting point for an upstream patch.
+
+```bash
+git clone --depth=1 https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+cd linux-next
 git switch -c my-fix
 ```
 
@@ -67,6 +81,81 @@ git status
 ```
 
 Note: Do not blindly fix warnings. Always verify logic.
+
+---
+
+## Finding Maintainers (Very Important)
+
+Before sending a patch, you must identify the correct maintainers and mailing lists.
+
+### Use the official script:
+
+```bash
+./scripts/get_maintainer.pl -f <file_path>
+```
+
+### Example:
+
+```bash
+./scripts/get_maintainer.pl -f drivers/staging/xxx/xxx.c
+```
+
+This will output:
+
+- Maintainer emails
+- Relevant mailing lists
+- Reviewers
+
+---
+
+### Send patch using the results:
+
+```bash
+git send-email \
+  --to="maintainer@email.com" \
+  --cc="mailing-list@domain.com" \
+  0001-*.patch
+```
+
+---
+
+## Notes
+
+- Always include **both maintainers AND mailing lists**
+- Do NOT guess recipients manually
+- Do NOT send only to one person
+- Do NOT CC unrelated maintainers (e.g., Linus)
+
+---
+
+## How it works
+
+The script parses the `MAINTAINERS` file in the kernel source tree to determine:
+
+- Which subsystem your change belongs to
+- Who is responsible for reviewing it
+- Which mailing list discussions happen on
+
+---
+
+## Important
+
+- For **staging drivers** → usually:
+  - gregkh@linuxfoundation.org
+  - linux-staging@lists.linux.dev
+
+- For **non-staging (mainline) code** → depends on subsystem  
+  (e.g., i2c, usb, networking, etc.)
+
+---
+
+## Pro Tip
+
+```bash
+./scripts/get_maintainer.pl -f <file> | xargs git send-email 0001-*.patch
+```
+
+(Review the output before sending!)
 
 ---
 
