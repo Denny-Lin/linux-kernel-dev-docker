@@ -1,22 +1,19 @@
 # Linux Kernel Development Environment (M5 Pro)
 
-A professional, Dockerized Linux kernel development environment optimized for Apple Silicon (M5 Pro). This setup provides an isolated and reproducible workspace for building, testing, and contributing to the upstream Linux kernel without affecting your macOS host.
+A clean, reproducible, Docker-based Linux kernel development environment optimized for Apple Silicon (M5 Pro).
+Designed for learning and contributing to the upstream Linux kernel.
 
 ---
 
 ## Quick Start
 
 ### 1. Build Docker Image
-Build the ARM64-native development environment:
 
 ```bash
 docker build --platform linux/arm64 -t kernel-dev .
 ```
 
----
-
 ### 2. Run Development Container
-Run the container by injecting your Git identity via environment variables. This approach keeps your credentials within the session and out of the container's persistent storage:
 
 ```bash
 docker run -it --rm \
@@ -31,21 +28,11 @@ docker run -it --rm \
   kernel-dev
 ```
 
-> Git identity is not stored in the container to keep the environment stateless and secure.
-
 ---
 
-## Working with linux-next (Recommended)
+## Base Trees
 
-For upstream contributions, always base your work on **linux-next**, not the mainline tree.
-
-### Fix Git HTTP2 issue (important in Docker)
-
-```bash
-git config --global http.version HTTP/1.1
-```
-
-### Option A (Recommended): Clone linux-next directly
+### linux-next (general use)
 
 ```bash
 git clone --depth=1 https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
@@ -53,15 +40,17 @@ cd linux-next
 git switch -c my-fix
 ```
 
-### Option B: Add linux-next to existing repo
+### staging (recommended for drivers/staging)
 
 ```bash
-git remote add linux-next https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-git fetch --depth=1 linux-next
-git switch -c my-fix linux-next/master
+git clone --depth=1 https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
+cd staging
+git switch -c my-fix
 ```
 
-### Ensure clean working tree
+---
+
+## Clean Working Tree
 
 ```bash
 git reset --hard
@@ -69,40 +58,47 @@ git clean -fd
 git status
 ```
 
-Expected:
-
-```
-nothing to commit, working tree clean
-```
-
 ---
 
-## Contribution Workflow (Staging Clean-up)
-
-### 1. Find Issues
+## Finding Issues
 
 ```bash
-./scripts/checkpatch.pl --no-tree -f drivers/staging/greybus/loopback.c | grep "WARNING"
+./scripts/checkpatch.pl --no-tree -f drivers/staging/... | grep WARNING
 ```
+
+Note: Do not blindly fix warnings. Always verify logic.
 
 ---
 
-### 2. Fix and Commit
-
-Make **minimal changes only** (one logical fix per patch):
+## Making Changes
 
 ```bash
-vi drivers/staging/greybus/loopback.c
+vi drivers/staging/.../file.c
 
-git add drivers/staging/greybus/loopback.c
-git -c user.name="Your Name" \
-    -c user.email="your@email.com" \
-    commit -s
+git add file.c
+git commit -s
 ```
 
 ---
 
-### 3. Generate Patch
+## Build Verification (Important)
+
+```bash
+make menuconfig   # enable your driver if needed
+make -j$(nproc)
+```
+
+Or:
+
+```bash
+make M=drivers/staging/...
+```
+
+Build is the authoritative check.
+
+---
+
+## Generate Patch (v1)
 
 ```bash
 git format-patch -1
@@ -111,60 +107,84 @@ git format-patch -1
 
 ---
 
-### 4. Send Patch via Email
+## Send Patch (v1)
 
 ```bash
 git send-email \
-  --to="Greg Kroah-Hartman <gregkh@linuxfoundation.org>" \
+  --to="maintainer@email.com" \
   --cc="linux-staging@lists.linux.dev" \
   --cc="linux-kernel@vger.kernel.org" \
-  --smtp-server=smtp.gmail.com \
-  --smtp-server-port=587 \
-  --smtp-encryption=tls \
-  --smtp-user="your@email.com" \
   0001-*.patch
 ```
 
-> You will be prompted for your Gmail App Password at runtime.
-
 ---
 
-## Security and Best Practices
+## Updating Patch (v2)
 
-- Do not store credentials in Dockerfile, environment variables, or Git
-- Always input sensitive data interactively
-- Keep the environment stateless and reproducible
-- Always work on a clean tree before committing
-- One patch = one logical change
+When you receive feedback:
 
----
+### 1. Amend commit
 
-## Features
+```bash
+git commit --amend
+```
 
-- Apple Silicon (ARM64) support
-- Docker-based development environment
-- linux-next workflow support
-- Kernel build & patch workflow
-- Secure, no credential persistence
-
----
-
-## Project Structure
+Add change log below the separator:
 
 ```
-.
-├── Dockerfile
-├── README.md
-├── .gitignore
-└── run.sh
+---
+Changes in v2:
+- Describe what changed from v1
 ```
+
+---
+
+### 2. Generate v2 patch
+
+```bash
+git format-patch --subject-prefix='PATCH v2' -1
+```
+
+Verify:
+
+```bash
+head -n 10 0001-*.patch
+```
+
+Expected:
+
+```
+Subject: [PATCH v2] ...
+```
+
+---
+
+### 3. Send v2 (same thread)
+
+```bash
+git send-email \
+  --to="maintainer@email.com" \
+  --cc="linux-staging@lists.linux.dev" \
+  --cc="linux-kernel@vger.kernel.org" \
+  --in-reply-to="<message-id>" \
+  0001-*.patch
+```
+
+---
+
+## Best Practices
+
+- Always build before sending patches
+- Use plain text emails only
+- One patch should contain one logical change
+- Verify warnings manually, do not rely only on checkpatch
+- Keep commit messages clear and minimal
 
 ---
 
 ## Goal
 
 - Fix a warning
-- Submit a patch
-- Learn kernel workflow
-
-Start small. Ship something.
+- Submit a patch (v1)
+- Improve and resend (v2)
+- Get accepted upstream
