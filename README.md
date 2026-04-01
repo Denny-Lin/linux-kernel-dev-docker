@@ -86,7 +86,7 @@ Note: Do not blindly fix warnings. Always verify logic.
 
 ## Finding Maintainers (Very Important)
 
-./scripts/get_maintainer.pl -f `<file_path>`{=html}
+./scripts/get_maintainer.pl -f `<file_path>`
 
 Example:
 
@@ -164,7 +164,7 @@ Subject: \[PATCH v2\] ...
 Usually send as a reply to the same thread:
 
 git send-email\
---in-reply-to="`<message-id>`{=html}"\
+--in-reply-to="`<message-id>`"\
 0001-\*.patch
 
 IMPORTANT:
@@ -185,13 +185,35 @@ If explicitly requested, always send as a new thread.
 
 ------------------------------------------------------------------------
 
+## Writing a Good Commit Message (Very Important)
+
+A kernel patch is not just code. The commit message must clearly explain
+what changed and why.
+
+<one-line summary>
+
+<why the change is needed>
+
+<what changed (if not obvious)>
+
+------------------------------------------------------------------------
+
+## Writing Changes in v2, v3...
+
+---
+Changes in v2:
+- Fix incorrect condition check
+- Update commit message for clarity
+---
+
+------------------------------------------------------------------------
+
 ## Best Practices
 
--   Always build before sending patches
--   Use plain text emails only
--   One patch should contain one logical change
--   Keep commit message consistent with actual code changes
--   Verify warnings manually, do not rely only on checkpatch
+- Always build before sending patches
+- Use plain text emails only
+- One patch should contain one logical change
+- Keep commit message consistent with actual code changes
 
 ------------------------------------------------------------------------
 
