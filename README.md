@@ -68,8 +68,9 @@ cd linux-next
 If the repository already exists:
 
 ```
+cd /linux/linux-next
 git fetch origin
-git switch --detach origin/master
+git reset --hard origin/master
 ```
 
 ------------------------------------------------------------------------
@@ -182,9 +183,9 @@ Notes:
 Always start from a clean base:
 
 ```bash
-cd linux-next
+cd /linux/linux-next
 git fetch origin
-git switch --detach origin/master
+git reset --hard origin/master
 ```
 
 Once you identify a bug or warning (e.g. from linux-next or build logs),
