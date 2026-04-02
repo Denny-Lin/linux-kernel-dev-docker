@@ -32,47 +32,43 @@ kernel-dev
 
 ------------------------------------------------------------------------
 
-## Base Trees
+## Choosing the Right Workflow (IMPORTANT)
 
-### mainline (default for most work)
+1. Clone a kernel tree (linux-next is OK for finding issues)
+2. Run tools to find warnings/errors
+3. Identify the affected file paths
+4. Run:
+   ./scripts/get_maintainer.pl -f <file_path>
+5. Choose the correct base tree (NOT linux-next for submission):
+   - drivers/staging → staging/staging-testing
+   - normal code → mainline (torvalds/linux)
+6. Create a branch from that tree
+7. Make your change and generate a patch
+8. Test the patch on the target tree
+9. Optionally test on linux-next for integration
+10. Send patch to maintainers + mailing lists
 
-Use this for documentation fixes, driver work, and normal upstream
-patches.
+Key idea:
+linux-next = finding issues / integration testing  
+subsystem trees (or mainline) = where patches are sent
 
-git clone https://github.com/torvalds/linux.git\
-cd linux\
-git switch -c my-fix
+---
 
-------------------------------------------------------------------------
+### Repository Setup
 
-### staging (only for drivers/staging)
+If this is your first time:
 
-Use this when your change is in drivers/staging/.
+```bash
+git clone -o linux-next https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+```
 
-git clone
-https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git\
-cd staging\
-git switch -c my-fix
+If the repository already exists:
 
-------------------------------------------------------------------------
-
-### linux-next (advanced use)
-
-Use this for integration testing and tracking subsystem merges. It is
-not the usual starting point for an upstream patch.
-
-git clone
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git\
-cd linux-next\
-git switch -c my-fix
-
-------------------------------------------------------------------------
-
-## Clean Working Tree
-
-git reset --hard\
-git clean -fd\
-git status
+```
+git branch -vv
+git fetch linux-next
+git switch linux-next/master
+```
 
 ------------------------------------------------------------------------
 
@@ -84,7 +80,24 @@ Note: Do not blindly fix warnings. Always verify logic.
 
 ------------------------------------------------------------------------
 
-## Finding Maintainers (Very Important)
+## Checking Before You Start a New Fix
+
+Before working on a bug, check whether someone is already fixing it or discussing it.
+
+### 1. lore.kernel.org (Mailing List Archive)
+
+https://lore.kernel.org/
+
+This is the official archive of Linux kernel mailing lists.
+
+Use it to:
+- Check whether the bug has already been reported
+- See whether a fix is already under review
+- Read maintainer comments and discussion threads
+
+------------------------------------------------------------------------
+
+## Finding Maintainers
 
 ./scripts/get_maintainer.pl -f `<file_path>`
 
@@ -98,21 +111,25 @@ This will output:
 -   Relevant mailing lists
 -   Reviewers
 
-------------------------------------------------------------------------
+## Choosing the Correct Base Tree
 
-## Sending Patch
+After identifying the maintainer and subsystem, choose the correct base tree.
 
-git send-email\
---to="maintainer@email.com"\
---cc="mailing-list@domain.com"\
-0001-\*.patch
+### Example: staging (drivers/staging)
 
-Notes:
+Use this when your change is in `drivers/staging/`.
 
--   Always include both maintainers AND mailing lists
--   Do NOT guess recipients manually
--   Do NOT send only to one person
--   Do NOT CC unrelated maintainers
+```bash
+git remote add staging https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
+git fetch staging
+git switch staging/staging-testing
+```
+
+### Clean Working Tree
+
+git reset --hard\
+git clean -fd\
+git status
 
 ------------------------------------------------------------------------
 
@@ -135,7 +152,39 @@ git format-patch -1\
 
 ------------------------------------------------------------------------
 
-## Updating Patch (v2)
+## Sending Patch
+
+git send-email\
+--to="maintainer@email.com"\
+--cc="mailing-list@domain.com"\
+0001-\*.patch
+
+Notes:
+
+-   Always include both maintainers AND mailing lists
+-   Do NOT guess recipients manually
+-   Do NOT send only to one person
+-   Do NOT CC unrelated maintainers
+
+------------------------------------------------------------------------
+
+## Starting a New Patch
+
+### Case 1: New independent patch
+
+Always start from a clean base:
+
+```bash
+git fetch linux-next
+git switch linux-next/master
+```
+
+Once you identify a bug or warning (e.g. from linux-next or build logs),
+you must switch to the correct base tree before creating a patch.
+
+------------------------------------------------------------------------
+
+### Case 2: Fixing previous patch (v2, v3...)
 
 When you receive feedback:
 
