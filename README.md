@@ -19,6 +19,7 @@ docker build --platform linux/arm64 -t kernel-dev .
 
 ### 2. Run Development Container
 
+```
 docker run -it \
   --name denny \
   --privileged \
@@ -31,6 +32,7 @@ docker run -it \
   -e GIT_COMMITTER_NAME="Your Name" \
   -e GIT_COMMITTER_EMAIL="your@email.com" \
   kernel-dev
+```
 
 ------------------------------------------------------------------------
 
