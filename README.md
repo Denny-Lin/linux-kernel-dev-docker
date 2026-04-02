@@ -67,7 +67,15 @@ If the repository already exists:
 ```
 git branch -vv
 git fetch linux-next
-git switch linux-next/master
+git switch --detach linux-next/master
+```
+
+### Clean Working Tree
+
+```
+git reset --hard\
+git clean -fd\
+git status
 ```
 
 ------------------------------------------------------------------------
@@ -119,10 +127,17 @@ After identifying the maintainer and subsystem, choose the correct base tree.
 
 Use this when your change is in `drivers/staging/`.
 
+If the `staging` remote is not already added:
+
 ```bash
 git remote add staging https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
+```
+
+Then:
+
+```bash
 git fetch staging
-git switch staging/staging-testing
+git switch -c my-new-fix --track staging/staging-testing
 ```
 
 ### Clean Working Tree
@@ -176,7 +191,7 @@ Always start from a clean base:
 
 ```bash
 git fetch linux-next
-git switch linux-next/master
+git switch --detach linux-next/master
 ```
 
 Once you identify a bug or warning (e.g. from linux-next or build logs),
