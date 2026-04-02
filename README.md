@@ -19,16 +19,18 @@ docker build --platform linux/arm64 -t kernel-dev .
 
 ### 2. Run Development Container
 
-docker run -it --rm\
---privileged\
---platform linux/arm64\
--v "\$(pwd)/linux:/linux-kernel"\
--w /linux-kernel\
--e GIT_AUTHOR_NAME="Your Name"\
--e GIT_AUTHOR_EMAIL="your@email.com"\
--e GIT_COMMITTER_NAME="Your Name"\
--e GIT_COMMITTER_EMAIL="your@email.com"\
-kernel-dev
+docker run -it \
+  --name denny \
+  --privileged \
+  --platform linux/arm64 \
+  -v kernel-dev:/linux \
+  -v "$(pwd)/patches:/patches" \
+  -w /linux \
+  -e GIT_AUTHOR_NAME="Your Name" \
+  -e GIT_AUTHOR_EMAIL="your@email.com" \
+  -e GIT_COMMITTER_NAME="Your Name" \
+  -e GIT_COMMITTER_EMAIL="your@email.com" \
+  kernel-dev
 
 ------------------------------------------------------------------------
 
