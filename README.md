@@ -73,9 +73,7 @@ git switch --detach linux-next/master
 ### Clean Working Tree
 
 ```
-git reset --hard\
-git clean -fd\
-git status
+git reset --hard && git clean -fd && git status
 ```
 
 ------------------------------------------------------------------------
