@@ -73,7 +73,8 @@ git switch --detach linux-next/master
 ### Clean Working Tree
 
 ```
-git reset --hard && git clean -fd && git status
+git rm -r --cached .
+git reset --hard HEAD && git status
 ```
 
 ------------------------------------------------------------------------
@@ -140,9 +141,8 @@ git switch -c my-new-fix --track staging/staging-testing
 
 ### Clean Working Tree
 
-git reset --hard\
-git clean -fd\
-git status
+git rm -r --cached .
+git reset --hard HEAD && git status
 
 ------------------------------------------------------------------------
 
