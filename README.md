@@ -42,8 +42,8 @@ docker run -it \
 4. Run:
    ./scripts/get_maintainer.pl -f <file_path>
 5. Choose the correct base tree (NOT linux-next for submission):
-   - drivers/staging → staging/staging-testing
-   - normal code → mainline (torvalds/linux)
+   - drivers/staging → staging tree (gregkh/staging.git)
+   - other subsystems → corresponding maintainer tree
 6. Create a branch from that tree
 7. Make your change and generate a patch
 8. Test the patch on the target tree
@@ -52,7 +52,7 @@ docker run -it \
 
 Key idea:
 linux-next = finding issues / integration testing  
-subsystem trees (or mainline) = where patches are sent
+maintainer trees = where patches are sent
 
 ---
 
@@ -151,8 +151,11 @@ make -j\$(nproc)
 
 ## Generate Patch (v1)
 
-git format-patch -1\
-./scripts/checkpatch.pl 0001-\*.patch
+```
+git format-patch -1 -o /patches\
+ls /patches
+./scripts/checkpatch.pl /patches/0001-*.patch
+```
 
 ------------------------------------------------------------------------
 
@@ -201,7 +204,7 @@ Add change log below the separator:
 
 ### 2. Generate v2 patch
 
-git format-patch --subject-prefix='PATCH v2' -1
+git format-patch -1 -v2 -o /patches
 
 Verify:
 
