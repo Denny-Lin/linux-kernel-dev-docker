@@ -59,22 +59,15 @@ subsystem trees (or mainline) = where patches are sent
 If this is your first time:
 
 ```bash
-git clone -o linux-next https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+git clone https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git linux-next
+cd linux-next
 ```
 
 If the repository already exists:
 
 ```
-git branch -vv
-git fetch linux-next
-git switch --detach linux-next/master
-```
-
-### Clean Working Tree
-
-```
-git rm -r --cached .
-git reset --hard HEAD && git status
+git fetch origin
+git switch --detach origin/master
 ```
 
 ------------------------------------------------------------------------
@@ -126,23 +119,19 @@ After identifying the maintainer and subsystem, choose the correct base tree.
 
 Use this when your change is in `drivers/staging/`.
 
-If the `staging` remote is not already added:
+If this is your first time:
 
 ```bash
-git remote add staging https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
+git clone https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git staging
+cd staging
 ```
 
-Then:
+If the repository already exists:
 
 ```bash
-git fetch staging
-git switch -c my-new-fix --track staging/staging-testing
+git fetch origin
+git switch -c <patch-name> --track origin/staging-testing
 ```
-
-### Clean Working Tree
-
-git rm -r --cached .
-git reset --hard HEAD && git status
 
 ------------------------------------------------------------------------
 
@@ -188,8 +177,9 @@ Notes:
 Always start from a clean base:
 
 ```bash
-git fetch linux-next
-git switch --detach linux-next/master
+cd linux-next
+git fetch origin
+git switch --detach origin/master
 ```
 
 Once you identify a bug or warning (e.g. from linux-next or build logs),
