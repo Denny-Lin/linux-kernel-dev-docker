@@ -1,3 +1,5 @@
 linux/
 run.sh
 .DS_Store
+patches/
+run-2.sh

@@ -21,12 +21,14 @@ RUN apt-get update && apt-get install -y \
     vim \
     git-email \
     python3 \
+    python3-pip \
     kmod \
     cpio \
     wget \
     curl \
     file \
     gcc-x86-64-linux-gnu \
+    && pip3 install --no-cache-dir ply GitPython \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /linux-kernel
