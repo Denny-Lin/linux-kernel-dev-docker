@@ -1,8 +1,3 @@
----
-Changes in v2:
-- Describe what changed from v1
----
-
 # Linux Kernel Development Environment (M5 Pro)
 
 A clean, reproducible, Docker-based Linux kernel development environment
@@ -135,7 +130,7 @@ If the repository already exists:
 
 ```bash
 git fetch origin
-git switch -c <patch-name> --track origin/staging-testing
+git switch -c <patch-name> --track origin/staging-next
 ```
 
 ------------------------------------------------------------------------
