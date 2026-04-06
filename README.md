@@ -122,19 +122,15 @@ Use this when your change is in `drivers/staging/`.
 If this is your first time:
 
 ```bash
-git clone https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git staging
+git clone -b staging-next https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git staging
 cd staging
-git fetch origin
-git switch main
-git reset --hard origin/staging-next
-git branch --set-upstream-to=origin/staging-next main
 ```
 
 If the repository already exists:
 
 ```bash
 git fetch origin
-git switch -c <patch-name> --track origin/staging-next
+git switch -c <patch-name> origin/staging-next
 ```
 
 ------------------------------------------------------------------------
